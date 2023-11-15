@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+	font-family: 'Poppins', sans-serif;
+	@apply tracking-wide;
+}
+
 ::-webkit-scrollbar {
 	display: none;
 	-ms-overflow-style: none; /* IE and Edge */
@@ -89,4 +94,15 @@
 		/* //16 176 255; */
 		--color-white: 255 255 255;
 	}
+}
+
+.bg-pattern {
+	background-color: #b3e8e5;
+	opacity: 0.6;
+	background-image: repeating-radial-gradient(
+			circle at 0 0,
+			transparent 0,
+			#3bacb6 6px
+		),
+		repeating-linear-gradient(#2f8f9d, #3bacb6);
 }
