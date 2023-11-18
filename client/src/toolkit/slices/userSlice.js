@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loadState, removeState, saveState } from '../../utils/localStorage';
+import { user } from '../../utils/TestData';
 
 const initialState = {
-	user: loadState('user') ?? {},
+	user: loadState('user') ?? user,
 	edit: false,
 };
 

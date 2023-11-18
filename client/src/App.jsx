@@ -3,7 +3,7 @@ import { HomePage, Login, Register, ResetPassword, Profile } from './pages';
 import { useSelector } from 'react-redux';
 
 const Layout = () => {
-	const user = useSelector((state) => state.user);
+	const { user } = useSelector((state) => state.user);
 	const location = useLocation();
 
 	if (user?.token) {

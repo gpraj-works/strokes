@@ -23,7 +23,8 @@ const TextInput = forwardRef((props, ref) => {
 					id={name}
 					className={`bg-secondary rounded border border-[#666] outline-none text-sm text-accent-white px-4 py-2 placeholder:text-[#666] ${styles}`}
 					{...register}
-					aria-invalid={error ? 'true' : 'false'}
+					aria-invalid={ error ? 'true' : 'false' }
+					autoComplete='off'
 				/>
 			</div>
 			{error && <p className='text-xs mt-2.5 ml-1 text-danger'>{error}</p>}
