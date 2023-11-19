@@ -19,10 +19,10 @@ const FriendsCard = ({ friends }) => {
 						<img
 							src={friend?.profileUrl ?? NoProfile}
 							alt={friend?.email}
-							className='rounded-full w-14 h-14 object-cover'
+							className='rounded-full w-10 h-10 object-cover'
 						/>
 						<div className='flex flex-col justify-center'>
-							<p className='text-accent-white text-lg font-medium'>
+							<p className='text-accent-white font-medium'>
 								{friend?.firstName} {friend?.lastName}
 							</p>
 							<span className='text-accent-light text-sm'>
@@ -36,8 +36,6 @@ const FriendsCard = ({ friends }) => {
 	);
 };
 
-FriendsCard.propTypes = {
-	friends: propTypes.object,
-};
+FriendsCard.propTypes = { friends: propTypes.array };
 
 export default FriendsCard;

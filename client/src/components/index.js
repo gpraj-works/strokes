@@ -5,5 +5,15 @@ import Button from './Button';
 import TopBar from './TopBar';
 import ProfileCard from './ProfileCard';
 import FriendsCard from './FriendsCard';
+import PostCard from './PostCard';
 
-export { Loading, Logo, TextInput, Button, TopBar, ProfileCard, FriendsCard };
+export {
+	Loading,
+	Logo,
+	TextInput,
+	Button,
+	TopBar,
+	ProfileCard,
+	FriendsCard,
+	PostCard,
+};

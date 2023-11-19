@@ -20,12 +20,12 @@ const TopBar = () => {
 
 	return (
 		<div className='topbar w-full flex items-center justify-between py-2 px-6 bg-primary rounded-xl mt-2'>
-			<div className='w-full flex gap-1 items-center'>
+			<div className='w-4/6 flex gap-1 items-center'>
 				<Logo className='w-10' />
 				<span className='text-3xl text-strokes-700 font-semibold'>Strokes</span>
 			</div>
 			<form
-				className='flex items-center mx-2'
+				className='flex items-center justify-center mx-2 w-full'
 				encType='multipart/form-data'
 				onSubmit={handleSubmit(onSearch)}
 			>
@@ -43,7 +43,7 @@ const TopBar = () => {
 					style='inline-flex justify-center rounded-r-full bg-strokes-700 hover:bg-strokes-500 p-2.5 text-sm font-medium text-white border border-l-0 border-strokes-500 outline-none'
 				/>
 			</form>
-			<div className='mx-2 flex gap-3 items-center'>
+			<div className='flex gap-3 items-center justify-end w-4/6'>
 				<Button
 					title={
 						theme === 'dark' ? <BsSun size={16} /> : <BsMoonStars size={16} />

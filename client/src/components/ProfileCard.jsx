@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { NoProfile } from '../assets';
 import { BiSolidEdit, BiPlusCircle } from 'react-icons/bi';
 import {
-    BsBriefcase,
-    BsFacebook,
-    BsInstagram,
-    BsTwitterX
+	BsBriefcase,
+	BsFacebook,
+	BsInstagram,
+	BsTwitterX,
 } from 'react-icons/bs';
 import { SlLocationPin } from 'react-icons/sl';
 import Button from './Button';
@@ -106,8 +106,6 @@ const ProfileCard = ({ user }) => {
 	);
 };
 
-ProfileCard.propTypes = {
-	user: propTypes.object,
-};
+ProfileCard.propTypes = { user: propTypes.object };
 
 export default ProfileCard;
