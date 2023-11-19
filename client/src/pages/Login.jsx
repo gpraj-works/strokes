@@ -93,7 +93,7 @@ const Login = () => {
 							<Button
 								type='submit'
 								title='Login'
-								btnStyle='inline-flex justify-center rounded-md bg-strokes-700 hover:bg-strokes-500 px-8 py-3 text-sm font-medium text-white outline-none'
+								style='inline-flex justify-center rounded-md bg-strokes-700 hover:bg-strokes-500 px-8 py-3 text-sm font-medium text-white outline-none'
 							/>
 						)}
 					</form>
@@ -142,7 +142,7 @@ const Login = () => {
 						</div>
 						<Button
 							title='Invite people'
-							btnStyle='inline-flex justify-center rounded-md hover:bg-white hover:text-black border px-8 py-3 text-sm font-medium text-white outline-none'
+							style='inline-flex justify-center rounded-md hover:bg-white hover:text-black border px-8 py-3 text-sm font-medium text-white outline-none'
 						/>
 					</div>
 				</div>

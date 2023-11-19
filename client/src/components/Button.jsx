@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 
-const Button = ({ title, btnStyle, iconRight, type, onClick }) => {
+const Button = ({ title, style, iconRight, type, onClick }) => {
 	return (
 		<button
 			onClick={onClick}
 			type={type || 'button'}
-			className={`inline-flex items-center text-base ${btnStyle}`}
+			className={`inline-flex items-center text-base ${style}`}
 		>
 			{title}
 			{iconRight && <span className='ml-2'>{iconRight}</span>}
@@ -15,7 +15,7 @@ const Button = ({ title, btnStyle, iconRight, type, onClick }) => {
 
 Button.propTypes = {
 	title: PropTypes.any,
-	btnStyle: PropTypes.string,
+	style: PropTypes.string,
 	iconRight: PropTypes.element,
 	type: PropTypes.string,
 	onClick: PropTypes.any,

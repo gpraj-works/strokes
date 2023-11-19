@@ -1,12 +1,8 @@
 import { useState } from 'react';
-import { Logo, TextInput, Button, Loading } from '../components';
+import { TextInput, Button, Loading } from '../components';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { LoginBg } from '../assets';
-import { AiOutlineInteraction } from 'react-icons/ai';
-import { BsShare } from 'react-icons/bs';
-import { ImConnection } from 'react-icons/im';
+
 const ResetPassword = () => {
 	const {
 		register,
@@ -32,7 +28,9 @@ const ResetPassword = () => {
 						<p className='text-accent-white text-lg font-base'>
 							Enter your email
 						</p>
-						<span className='text-accent-light text-xs'>Enter your registered email address</span>
+						<span className='text-accent-light text-xs'>
+							Enter your registered email address
+						</span>
 					</div>
 					<form
 						className='py-5 flex flex-col gap-5'
@@ -67,7 +65,7 @@ const ResetPassword = () => {
 							<Button
 								type='submit'
 								title='Reset password'
-								btnStyle='inline-flex justify-center rounded-md bg-strokes-700 hover:bg-strokes-500 px-8 py-3 text-sm font-medium text-white outline-none'
+								style='inline-flex justify-center rounded-md bg-strokes-700 hover:bg-strokes-500 px-8 py-3 text-sm font-medium text-white outline-none'
 							/>
 						)}
 					</form>

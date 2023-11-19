@@ -40,7 +40,7 @@ const TopBar = () => {
 				<Button
 					title={<IoSearch size={16} />}
 					type='submit'
-					btnStyle='inline-flex justify-center rounded-r-full bg-strokes-700 hover:bg-strokes-500 p-2.5 text-sm font-medium text-white border border-l-0 border-strokes-500 outline-none'
+					style='inline-flex justify-center rounded-r-full bg-strokes-700 hover:bg-strokes-500 p-2.5 text-sm font-medium text-white border border-l-0 border-strokes-500 outline-none'
 				/>
 			</form>
 			<div className='mx-2 flex gap-3 items-center'>
@@ -49,11 +49,11 @@ const TopBar = () => {
 						theme === 'dark' ? <BsSun size={16} /> : <BsMoonStars size={16} />
 					}
 					onClick={changeTheme}
-					btnStyle='inline-flex justify-center rounded-full bg-strokes-700 hover:bg-strokes-500 p-3 text-sm font-medium text-white outline-none'
+					style='inline-flex justify-center rounded-full bg-strokes-700 hover:bg-strokes-500 p-3 text-sm font-medium text-white outline-none'
 				/>
 				<Button
 					title={<BsBell size={16} />}
-					btnStyle='inline-flex justify-center rounded-full bg-strokes-700 hover:bg-strokes-500 p-3 text-sm font-medium text-white outline-none'
+					style='inline-flex justify-center rounded-full bg-strokes-700 hover:bg-strokes-500 p-3 text-sm font-medium text-white outline-none'
 				/>
 			</div>
 		</div>
