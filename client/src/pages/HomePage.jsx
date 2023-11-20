@@ -43,12 +43,12 @@ const HomePage = () => {
 					<ProfileCard user={user} />
 					<FriendsCard friends={user?.friends} />
 				</div>
-				<div className='flex-1 h-full px-4 flex flex-col gap-8 overflow-y-auto'>
+				<div className='flex-1 h-full px-4 flex flex-col gap-4 overflow-y-auto'>
 					<form
 						onSubmit={handleSubmit(handleUploadPost)}
 						className='bg-primary px-4 rounded-xl'
 					>
-						<div className='w-full flex items-center justify-between border-b border-[#666] p-4 text-accent-white gap-4'>
+						<div className='w-full flex items-center justify-between border-b accent-border p-4 text-accent-white gap-4'>
 							<img
 								src={user?.profileUrl ?? NoProfile}
 								alt={user?.email}
@@ -149,7 +149,7 @@ const HomePage = () => {
 				</div>
 				<div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-3 overflow-y-auto'>
 					<div className='w-full bg-primary flex flex-col items-center shadow-sm rounded-xl px-6 py-4'>
-						<div className='w-full flex items-center justify-between border-b border-[#666] pb-2 text-accent-white'>
+						<div className='w-full flex items-center justify-between border-b accent-border pb-2 text-accent-white'>
 							<span>Friend requests</span>
 							<span>{friendRequest?.length}</span>
 						</div>
@@ -190,7 +190,7 @@ const HomePage = () => {
 						</div>
 					</div>
 					<div className='w-full bg-primary flex flex-col items-center shadow-sm rounded-xl px-6 py-4'>
-						<div className='w-full flex items-center justify-between border-b border-[#666] pb-2 text-accent-white'>
+						<div className='w-full flex items-center justify-between border-b accent-border pb-2 text-accent-white'>
 							<span>Friend suggestions</span>
 						</div>
 						<div className='w-full flex flex-col gap-4 pt-4'>

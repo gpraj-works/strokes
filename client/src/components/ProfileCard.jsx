@@ -19,7 +19,7 @@ const ProfileCard = ({ user }) => {
 	const dispatch = useDispatch();
 	return (
 		<div className='w-full bg-primary flex flex-col items-center shadow-sm rounded-xl px-6 py-4'>
-			<div className='w-full flex items-center justify-between border-b border-[#666] pb-4'>
+			<div className='w-full flex items-center justify-between border-b accent-border pb-4'>
 				<Link to={'/profile/' + user?._id} className='flex gap-4'>
 					<img
 						src={user?.profileUrl ?? NoProfile}
@@ -51,7 +51,7 @@ const ProfileCard = ({ user }) => {
 					)}
 				</div>
 			</div>
-			<div className='w-full flex flex-col justify-between gap-2 border-b border-[#666] py-4'>
+			<div className='w-full flex flex-col justify-between gap-2 border-b accent-border py-4'>
 				<button className='inline-flex gap-2 items-center'>
 					<SlLocationPin className='text-accent-light text-lg font-bold' />
 					<span className='text-accent-light'>
@@ -65,7 +65,7 @@ const ProfileCard = ({ user }) => {
 					</span>
 				</button>
 			</div>
-			<div className='w-full flex flex-col justify-between gap-2 border-b border-[#666] py-4'>
+			<div className='w-full flex flex-col justify-between gap-2 border-b accent-border py-4'>
 				<p className='text-lg text-accent-white font-semibold'>
 					{user?.friends?.length} Friends
 				</p>

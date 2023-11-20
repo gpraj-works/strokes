@@ -21,7 +21,7 @@ const TextInput = forwardRef((props, ref) => {
 					placeholder={placeholder}
 					ref={ref}
 					id={name}
-					className={`bg-secondary rounded border border-[#666] outline-none text-sm text-accent-white px-4 py-2 placeholder:text-[#666] ${styles}`}
+					className={`bg-secondary rounded border accent-border outline-none text-sm text-accent-white px-4 py-2 placeholder:text-[#666] ${styles}`}
 					{...register}
 					aria-invalid={ error ? 'true' : 'false' }
 					autoComplete='off'
