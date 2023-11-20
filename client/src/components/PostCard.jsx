@@ -3,8 +3,77 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NoProfile } from '../assets';
 import moment from 'moment';
-import { BsHeart, BsHeartFill } from 'react-icons/bs';
+import { BsHeart, BsHeartFill, BsTrash3 } from 'react-icons/bs';
 import { IoChatbubblesOutline } from 'react-icons/io5';
+import { Button, Loading, TextInput } from '../components';
+import { useForm } from 'react-hook-form';
+import { postComments } from '../utils/TestData';
+
+const PostComments = ({ user, id, replyAt, getComments }) => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
+
+	const [errMsg, setErrMsg] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	const onSubmit = (data) => {};
+
+	return (
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className='border-b accent-border flex items-center flex-col lg:flex-row'
+		>
+			<div className='w-full flex items-start justify-between p-4 text-accent-white gap-4'>
+				{loading && <Loading />}
+				{!loading && (
+					<>
+						<img
+							src={user?.profileUrl ?? NoProfile}
+							alt={user?.email}
+							className='rounded-full w-10 h-10 mt-2 object-cover'
+						/>
+						<TextInput
+							name='comment'
+							placeholder={replyAt ? `Reply @${replyAt}` : 'Comment this post'}
+							type='text'
+							register={register('comment', {
+								required: 'Your comment is empty',
+							})}
+							styles='w-full rounded-full'
+							error={errors.comment ? errors.comment.message : ''}
+						/>
+
+						{errMsg?.message && (
+							<span
+								className={`text-sm ${
+									errMsg?.status == 'failed' ? 'text-danger' : 'text-success'
+								} mt-1`}
+							>
+								{errMsg?.message}
+							</span>
+						)}
+
+						<Button
+							title={'Post'}
+							type='submit'
+							style='bg-strokes-700 text-accent-white px-4 py-1.5 mt-2 rounded-full'
+						/>
+					</>
+				)}
+			</div>
+		</form>
+	);
+};
+
+PostComments.propTypes = {
+	user: propTypes.object,
+	id: propTypes.string,
+	getComments: propTypes.func,
+	replyAt: propTypes.string,
+};
 
 const PostCard = ({ post, user, deletePost, likePost }) => {
 	const [showAll, setShowAll] = useState(0);
@@ -13,6 +82,13 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 	const [loading, setLoading] = useState(false);
 	const [replyComments, setReplyComments] = useState(0);
 	const [showComments, setShowComments] = useState(0);
+
+	const getComments = async () => {
+		setReplyComments(0);
+
+		setComments(postComments);
+		setLoading(false);
+	};
 
 	return (
 		<div className='bg-primary p-5 rounded-xl'>
@@ -70,7 +146,10 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 				)}
 			</div>
 			<div className='w-full flex items-center justify-between pt-3 text-accent-white'>
-				<button className='outline-none inline-flex items-center gap-2'>
+				<button
+					className='outline-none inline-flex items-center gap-2'
+					onClick={() => likePost(post?._id)}
+				>
 					{post?.likes?.includes(user?._id) ? (
 						<BsHeartFill className='text-strokes-700' />
 					) : (
@@ -78,10 +157,96 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 					)}{' '}
 					<span>{post?.likes?.length} Likes</span>
 				</button>
-				<button className='outline-none inline-flex items-center gap-2'>
+
+				<button
+					className='outline-none inline-flex items-center gap-2'
+					onClick={() => {
+						setShowComments(showComments === post?._id ? null : post?._id);
+						getComments(post?._id);
+					}}
+				>
 					<IoChatbubblesOutline /> <span>{post?.likes?.length} Comments</span>
 				</button>
+
+				{user?._id === post?.userId?._id && (
+					<button
+						className='outline-none inline-flex items-center text-danger gap-2'
+						onClick={() => deletePost(post?._id)}
+					>
+						<BsTrash3 /> <span> Delete</span>
+					</button>
+				)}
 			</div>
+			{showComments === post?._id && (
+				<>
+					<div className='w-full mt-4 border-t accent-border mb-2'>
+						<PostComments
+							user={user}
+							id={post?._id}
+							getComments={() => getComments(post?._id)}
+						/>
+					</div>
+					{loading ? (
+						<Loading />
+					) : (
+						comments.push.length > 0 &&
+						comments?.map((comment) => (
+							<div key={comment?._id} className='w-full py-2'>
+								<div className='flex gap-4'>
+									<Link to={'/profile/' + comment?.userId?._id}>
+										<img
+											src={comment?.userId?.profileUrl ?? NoProfile}
+											alt='comments'
+											className='rounded-full w-8 h-8 object-cover'
+										/>
+									</Link>
+
+									<Link
+										to={'/profile/' + comment?.userId?._id}
+										className='flex flex-col justify-center'
+									>
+										<p className='text-accent-white text-sm font-medium truncate ... w-40'>
+											{comment?.userId?.firstName} {comment?.userId?.lastName}
+										</p>
+										<span className='text-accent-light text-xs truncate ...'>
+											{moment(comment?.userId?.createdAt).fromNow()}
+										</span>
+									</Link>
+								</div>
+								<p className='ml-12 my-2 text-accent-light'>
+									{comment?.comment}
+
+									<div className='mt-2 flex gap-2'>
+										<button className='outline-none inline-flex items-center gap-2 text-sm'>
+											{comment?.likes?.includes(user?._id) ? (
+												<BsHeartFill className='text-strokes-700' />
+											) : (
+												<BsHeart />
+											)}{' '}
+											<span>{comment?.likes?.length} Likes</span>
+										</button>
+										<button
+											onClick={() => setReplyComments(comment?._id)}
+											className='outline-none inline-flex items-center gap-2 text-sm text-strokes-700'
+										>
+											Reply
+										</button>
+									</div>
+
+									{replyComments === comment?._id && (
+										<PostComments
+											user={user}
+											id={post?._id}
+											replyAt={comment?.from}
+											getComments={() => getComments(post?._id)}
+										/>
+									)}
+								</p>
+							</div>
+						))
+					)}
+				</>
+			)}
 		</div>
 	);
 };
@@ -89,8 +254,8 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 PostCard.propTypes = {
 	post: propTypes.object,
 	user: propTypes.object,
-	deletePost: propTypes.object,
-	likePost: propTypes.object,
+	deletePost: propTypes.func,
+	likePost: propTypes.func,
 };
 
 export default PostCard;
