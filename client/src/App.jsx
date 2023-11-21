@@ -22,7 +22,7 @@ function App() {
 			<Routes>
 				<Route element={<Layout />}>
 					<Route path='/' element={<HomePage />} />
-					<Route path='/profile:id?' element={<Profile />} />
+					<Route path='/profile/:id?' element={<Profile />} />
 				</Route>
 				<Route path='/register' element={<Register />} />
 				<Route path='/login' element={<Login />} />
