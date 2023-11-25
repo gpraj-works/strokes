@@ -1,5 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 const envConfig = {
-	connection: process.env.CONNECTION,
+	conn: process.env.CONN,
+	code: process.env.CODE,
+	port: 3002,
 };
 
-export default envConfig;
+export const env = envConfig;
