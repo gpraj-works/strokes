@@ -1,4 +1,13 @@
-import { validateLogin, validateRegister } from './validationMiddleware.js';
+import {
+	validateLogin,
+	validateRegister,
+	validateVerifyEmail,
+} from './validationMiddleware.js';
 import errorMiddleware from './errorMiddleware.js';
 
-export { validateLogin, validateRegister, errorMiddleware };
+export {
+	validateLogin,
+	validateRegister,
+	validateVerifyEmail,
+	errorMiddleware,
+};

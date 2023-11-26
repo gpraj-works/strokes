@@ -5,17 +5,15 @@ import { env } from '../config/envConfig.js';
 import Verification from '../models/emailVerification.js';
 import { hashString } from './tokenUtils.js';
 
-const { auth, host } = env.mail;
+let transporter = nodemailer.createTransport({ ...env.mail });
 
-let transporter = nodemailer.createTransport({ host, auth });
-
-export const sendVerificationEmail = async (user, res) => {
+export const sendVerificationEmail = async (user) => {
 	const { _id, email, firstName, lastName } = user;
 	const token = _id + uuid();
-	const link = env.appUrl + '' + _id + '/' + token;
+	const link = env.appUrl + 'users/verify/' + _id + '/' + token;
 
 	const mailOptions = {
-		from: auth.user,
+		from: `"Strokes" <${env.mail?.auth.user}>`,
 		to: email,
 		subject: 'Email verification',
 		//use express-handlebars (if needed)
@@ -32,25 +30,11 @@ export const sendVerificationEmail = async (user, res) => {
 		});
 
 		if (isVerified) {
-			const sendMail = transporter.sendMail(mailOptions);
-			sendMail.then(() => {
-				return res.status(StatusCodes.CREATED).json({
-					success: 'PENDING',
-					message: 'Verification email sent. Check your email and verify.',
-				});
-			});
-
-			sendMail.catch(() => {
-				return res.status(StatusCodes.BAD_REQUEST).json({
-					success: 'FAILED',
-					message: 'Something went wrong',
-				});
-			});
+			await transporter.sendMail(mailOptions);
+			return true;
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(StatusCodes.BAD_REQUEST).json({
-			message: 'Something went wrong',
-		});
+		return false;
 	}
 };

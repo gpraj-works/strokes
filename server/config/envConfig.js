@@ -7,12 +7,12 @@ const envConfig = {
 	port: 3002,
 	appUrl: 'http://localhost:3002/',
 	mail: {
-		host: 'gpraj@outlook.in',
+		host: 'smtp-relay.brevo.com',
+		secureConnection: true,
 		auth: {
-			user: 'mey.MEY.mey',
-			password: 'smtp-mail.outlook.com',
-		},
-		port: '587',
+			user: 'techfewbugs@gmail.com',
+			pass: 'a4IHCm3MVr2bjYZG',
+		}
 	},
 };
 
