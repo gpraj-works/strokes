@@ -70,8 +70,6 @@ export const validateVerifyEmail = async (req, res, next) => {
 	const { userId } = req.params;
 	const isExist = await Verification.findOne({ userId });
 
-	console.log(isExist);
-
 	if (isExist) {
 		const { expiresAt } = isExist;
 
@@ -79,16 +77,15 @@ export const validateVerifyEmail = async (req, res, next) => {
 			try {
 				await Verification.findOneAndDelete({ userId });
 				await Users.findOneAndDelete({ _id: userId });
-				const message = 'Verification token has expired.';
-				return res.redirect(`users/verified?status=error&message=${message}`);
+				const msg = 'Verification token has expired';
+				return res.redirect(`/api/v1/users/verified?status=error&message=${msg}`);
 			} catch (error) {
 				console.log(error);
-				return res.redirect('users/verified?status=error&message=');
+				const msg = 'Unable to verify, Please retry';
+				return res.redirect(`/api/v1/users/verified?status=error&message=${msg}`);
 			}
 		}
 
 		next();
 	}
-
-	return res.redirect('users/verified?message=');
 };

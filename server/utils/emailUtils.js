@@ -10,7 +10,7 @@ let transporter = nodemailer.createTransport({ ...env.mail });
 export const sendVerificationEmail = async (user) => {
 	const { _id, email, firstName, lastName } = user;
 	const token = _id + uuid();
-	const link = env.appUrl + 'users/verify/' + _id + '/' + token;
+	const link = env.appUrl + '/users/verify/' + _id + '/' + token;
 
 	const mailOptions = {
 		from: `"Strokes" <${env.mail?.auth.user}>`,

@@ -5,12 +5,81 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Email id Verification</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+        <style>
+            html,
+            body {
+                height: 100vh;
+            }
+        </style>
     </head>
 
     <body>
-        <div>
-            <h3 id="heading"></h3>
-        </div>
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="d-none flex-column align-items-center w-50 px-5" id="success">
+                <span>
+                    <svg width="150px" height="150px" viewBox="0 0 24 24" fill="none" id="success-icon">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_iconCarrier">
+                            <circle cx="10" cy="14" r="7" fill="#198754" fill-opacity="0.24" />
+                            <path d="M6 13L9.21391 15.4104C9.65027 15.7377 10.2684 15.6549 10.6033 15.2244L17 7"
+                                stroke="#198754" stroke-width="1.2" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </span>
+
+                <h3 class="fw-bold mb-3" id="success-title"></h3>
+                <p class="lead fw-medium text-center" id="success-description">Your account has been successfully
+                    verified. Please proceed to the
+                    login page
+                    to access your account.
+                </p>
+                <a href="http://localhost:3000/login" class="btn btn-success" id="success-link">Go to login page</a>
+            </div>
+            <div class="d-none flex-column align-items-center w-50 px-5" id="failed">
+                <span>
+                    <svg width="150px" height="150px" viewBox="0 0 24 24" fill="none" id="failed-icon">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                        <g id="SVGRepo_iconCarrier">
+                            <path
+                                d="M12 20.4C10.8969 20.4 9.80459 20.1827 8.78546 19.7606C7.76632 19.3384 6.84031 18.7197 6.0603 17.9397C5.28029 17.1597 4.66155 16.2337 4.23941 15.2145C3.81727 14.1954 3.6 13.1031 3.6 12C3.6 10.8969 3.81727 9.80459 4.23941 8.78546C4.66155 7.76632 5.28029 6.84031 6.0603 6.0603C6.84032 5.28029 7.76633 4.66155 8.78546 4.23941C9.8046 3.81727 10.8969 3.6 12 3.6C13.1031 3.6 14.1954 3.81727 15.2145 4.23941C16.2337 4.66155 17.1597 5.28029 17.9397 6.0603C18.7197 6.84032 19.3384 7.76633 19.7606 8.78546C20.1827 9.8046 20.4 10.8969 20.4 12C20.4 13.1031 20.1827 14.1954 19.7606 15.2145C19.3384 16.2337 18.7197 17.1597 17.9397 17.9397C17.1597 18.7197 16.2337 19.3384 15.2145 19.7606C14.1954 20.1827 13.1031 20.4 12 20.4L12 20.4Z"
+                                stroke="#dc3545" stroke-opacity="0.24" stroke-width="1.2" />
+                            <path d="M9 9L15 15" stroke="#dc3545" stroke-width="1.2" stroke-linecap="round" />
+                            <path d="M15 9L9 15" stroke="#dc3545" stroke-width="1.2" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </span>
+
+                <h3 class="fw-bold mb-3" id="failed-title">Verification failed or link is invalid</h3>
+                <p class="lead fw-medium text-center" id="failed-description">Verification failed due to invalid
+                    link or an expired verification token. Please ensure you are using
+                    the correct link.
+                </p>
+                <button class="btn btn-danger" onclick="window.close()" id="failed-link">Close page</button>
+            </div>
+            <script>
+                const failedContainer = document.querySelector('#failed');
+                const failedTitle = document.querySelector('#failed-title');
+                const successContainer = document.querySelector('#success');
+                const successTitle = document.querySelector('#success-title');
+                
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const status = urlParams.get('status');
+                const message = urlParams.get('message');
+
+                if (status === 'success') {
+                    successContainer.classList.replace('d-none', 'd-flex');
+                    successTitle.innerHTML = message;
+                }
+
+                if (status === 'error') {
+                    failedContainer.classList.replace('d-none', 'd-flex');
+                    failedTitle.innerHTML = message;
+                }
+            </script>
     </body>
 
 </html>
