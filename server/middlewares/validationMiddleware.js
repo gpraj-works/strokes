@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import Users from '../models/userModel.js';
 import { compareString } from '../utils/tokenUtils.js';
 import Verification from '../models/emailVerification.js';
+import { env } from '../config/envConfig.js';
 
 export const validateRegister = async (req, res, next) => {
 	const { firstName, lastName, email, password } = req.body;
@@ -69,23 +70,40 @@ export const validateLogin = async (req, res, next) => {
 export const validateVerifyEmail = async (req, res, next) => {
 	const { userId } = req.params;
 	const isExist = await Verification.findOne({ userId });
+	const redirectUrl = `${env.appUrl}/users/verified`;
 
 	if (isExist) {
-		const { expiresAt } = isExist;
+		const { expiresAt, token: hashedToken } = isExist;
 
 		if (expiresAt < Date.now()) {
 			try {
 				await Verification.findOneAndDelete({ userId });
 				await Users.findOneAndDelete({ _id: userId });
 				const msg = 'Verification token has expired';
-				return res.redirect(`/api/v1/users/verified?status=error&message=${msg}`);
+				return res.redirect(redirectUrl + `?status=error&message=${msg}`);
 			} catch (error) {
 				console.log(error);
 				const msg = 'Unable to verify, Please retry';
-				return res.redirect(`/api/v1/users/verified?status=error&message=${msg}`);
+				return res.redirect(redirectUrl + `?status=error&message=${msg}`);
 			}
 		}
 
+		req.hashedToken = hashedToken;
 		next();
 	}
+};
+
+export const validateResetPassword = async (req, res, next) => {
+	const { email } = req.body;
+	const isUserExist = await Users.findOne({ email });
+
+	if (!isUserExist) {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			success: 'FAILED',
+			message: 'Email id not found!',
+		});
+	}
+
+	req.user = isUserExist;
+	next();
 };

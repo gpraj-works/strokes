@@ -13,7 +13,7 @@ const app = express();
 const port = env.port || 3002;
 const __dirname = path.resolve(path.dirname(''));
 
-app.use(express.static(path.join(__dirname, 'views/')));
+app.use(express.static(path.join(__dirname, 'views/build')));
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
