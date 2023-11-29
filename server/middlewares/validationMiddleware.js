@@ -3,6 +3,7 @@ import Users from '../models/userModel.js';
 import { compareString } from '../utils/tokenUtils.js';
 import Verification from '../models/emailVerification.js';
 import { env } from '../config/envConfig.js';
+import PasswordReset from '../models/passwordReset.js';
 
 export const validateRegister = async (req, res, next) => {
 	const { firstName, lastName, email, password } = req.body;
@@ -93,7 +94,7 @@ export const validateVerifyEmail = async (req, res, next) => {
 	}
 };
 
-export const validateResetPassword = async (req, res, next) => {
+export const validateRequestResetPassword = async (req, res, next) => {
 	const { email } = req.body;
 	const isUserExist = await Users.findOne({ email });
 
@@ -105,5 +106,27 @@ export const validateResetPassword = async (req, res, next) => {
 	}
 
 	req.user = isUserExist;
+	next();
+};
+
+export const validateResetPassword = async (req, res, next) => {
+	const { userId, token } = req.params;
+	const isExist = await Users.findById(userId);
+	const redirectUrl = `${env.appUrl}/users/reset-password`;
+
+	if (!isExist) {
+		const msg = 'Invalid password reset link. Try again';
+		return res.redirect(redirectUrl + `?status=error&message=${msg}`);
+	}
+
+	const resetPassword = await PasswordReset.findOne({ userId });
+
+	if (!resetPassword) {
+		const msg = 'Invalid password reset link. Try again';
+		return res.redirect(redirectUrl + `?status=error&message=${msg}`);
+	}
+
+	req.resetPassword = resetPassword;
+
 	next();
 };
