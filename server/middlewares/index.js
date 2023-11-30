@@ -4,8 +4,12 @@ import {
 	validateVerifyEmail,
 	validateRequestResetPassword,
 	validateResetPassword,
+	validateUpdateUser,
 } from './validationMiddleware.js';
+import { authUser } from './authMiddleware.js';
 import errorMiddleware from './errorMiddleware.js';
+
+// validation-middleware
 
 export {
 	validateLogin,
@@ -13,5 +17,9 @@ export {
 	validateVerifyEmail,
 	validateRequestResetPassword,
 	validateResetPassword,
-	errorMiddleware,
+	validateUpdateUser,
 };
+	
+// other middlewares
+
+export { authUser, errorMiddleware };

@@ -14,3 +14,7 @@ export const compareString = async (string, hash) => {
 export const createToken = (userId) => {
 	return Jwt.sign({ userId }, env.code, { expiresIn: '1d' });
 };
+
+export const validateToken = (token) => {
+	return Jwt.verify(token, env.code);
+};

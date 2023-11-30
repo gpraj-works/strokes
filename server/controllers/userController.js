@@ -1,7 +1,7 @@
 import { env } from '../config/envConfig.js';
 import Verification from '../models/emailVerification.js';
 import Users from '../models/userModel.js';
-import { compareString, hashString } from '../utils/tokenUtils.js';
+import { compareString, createToken, hashString } from '../utils/tokenUtils.js';
 import PasswordReset from '../models/passwordReset.js';
 import { StatusCodes } from 'http-status-codes';
 import { resetPasswordLink } from '../utils/emailUtils.js';
@@ -30,32 +30,41 @@ export const verifyEmail = async (req, res) => {
 export const requestPasswordReset = async (req, res) => {
 	const { email } = req.body;
 	const user = req.user;
-	const isRequestExist = await PasswordReset.findOne({ email });
 
-	if (isRequestExist) {
-		if (isRequestExist.expiresAt > Date.now()) {
-			return res.status(StatusCodes.CREATED).json({
-				success: 'PENDING',
-				message: 'Reset password link already sent to your email.',
+	try {
+		const isRequestExist = await PasswordReset.findOne({ email });
+
+		if (isRequestExist) {
+			if (isRequestExist.expiresAt > Date.now()) {
+				return res.status(StatusCodes.CREATED).json({
+					success: 'PENDING',
+					message: 'Reset password link already sent to your email.',
+				});
+			}
+
+			await PasswordReset.findOneAndDelete({ email });
+		}
+
+		const isSent = await resetPasswordLink(user);
+
+		if (!isSent) {
+			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+				success: 'FAILED',
+				message: 'Something went wrong. Try again later.',
 			});
 		}
 
-		await PasswordReset.findOneAndDelete({ email });
-	}
-
-	const isSent = await resetPasswordLink(user);
-
-	if (!isSent) {
+		return res.status(StatusCodes.CREATED).json({
+			success: 'PENDING',
+			message: 'Reset password link sent to your email.',
+		});
+	} catch (error) {
+		console.log(error);
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-			success: 'FAILED',
-			message: 'Something went wrong. Try again later.',
+			status: 'FAILED',
+			message: 'Something went wrong!',
 		});
 	}
-
-	return res.status(StatusCodes.CREATED).json({
-		success: 'PENDING',
-		message: 'Reset password link sent to your email.',
-	});
 };
 
 export const resetPassword = async (req, res) => {
@@ -81,18 +90,88 @@ export const resetPassword = async (req, res) => {
 export const changePassword = async (req, res) => {
 	const { userId, password } = req.body;
 	const hashedPassword = await hashString(password);
-	const redirectUrl = `${env.appUrl}/users/reset-password`;
 
-	const isChanged = await Users.findOneAndUpdate(
-		{ _id: userId },
-		{ password: hashedPassword }
-	);
+	try {
+		const isChanged = await Users.findOneAndUpdate(
+			{ _id: userId },
+			{ password: hashedPassword }
+		);
 
-	if (isChanged) {
-		await PasswordReset.findOneAndDelete({ userId });
-		return res.status(StatusCodes.OK).json({
-			status: 'success',
-			message: 'Password reset successfully',
+		if (isChanged) {
+			await PasswordReset.findOneAndDelete({ userId });
+			return res.status(StatusCodes.OK).json({
+				status: 'success',
+				message: 'Password reset successfully',
+			});
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
 		});
 	}
 };
+
+export const userById = async (req, res) => {
+	const { userId } = req.body.user;
+	const { id } = req.params;
+
+	try {
+		const user = await Users.findById(id ?? userId).populate({
+			path: 'friends',
+			select: '-password',
+		});
+
+		if (!user) {
+			return res.status(StatusCodes.NOT_FOUND).json({
+				success: false,
+				message: 'User not found!',
+			});
+		}
+
+		user.password = undefined;
+
+		return res.status(StatusCodes.OK).json({ success: true, user });
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const updateUser = async (req, res) => {
+	const { userId } = req.body.user;
+
+	try {
+		const updatedUser = await Users.findByIdAndUpdate(userId, req?.toUpdate, {
+			new: true,
+		});
+
+		await updatedUser.populate({ path: 'friends', select: '-password' });
+
+		const token = createToken(updateUser?._id);
+		updatedUser.password = undefined;
+
+		return res.status(StatusCodes.OK).json({
+			success: true,
+			message: 'User updated successfully',
+			user: updateUser,
+			token,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const friendRequest = async (req, res) => {};
+
+export const getFriendRequest = async (req, res) => {};
+
+export const acceptRequest = async (req, res) => {};
