@@ -10,6 +10,8 @@ import {
 	friendRequest,
 	acceptRequest,
 	getFriendRequest,
+	profileViews,
+	suggestedFriends,
 } from '../controllers/index.js';
 import {
 	validateRequestResetPassword,
@@ -17,6 +19,7 @@ import {
 	validateVerifyEmail,
 	validateUpdateUser,
 	authUser,
+	validateFriendRequest,
 } from '../middlewares/index.js';
 
 const router = express.Router();
@@ -38,13 +41,18 @@ router.get(
 router.post('/reset-password', changePassword);
 
 // user
-router.get('/userById/:id', authUser, userById);
+router.post('/userById/:id?', authUser, userById);
 router.put('/update-user', authUser, validateUpdateUser, updateUser);
 
 // friend-request
-router.post('/friend-request', authUser, friendRequest);
+router.post('/friend-request', authUser, validateFriendRequest, friendRequest);
 router.post('/get-friend-request', authUser, getFriendRequest);
 router.post('/accept-request', authUser, acceptRequest);
+
+// profile
+
+router.post('/profile-view', authUser, profileViews);
+router.post('/suggested-friends', authUser, suggestedFriends);
 
 // views
 router.get('/verified', (req, res) => {

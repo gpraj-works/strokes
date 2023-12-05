@@ -1,7 +1,7 @@
 import { validateToken } from '../utils/tokenUtils.js';
 
 export const authUser = async (req, res, next) => {
-	const authHeader = req?.header?.authorization;
+	const authHeader = req?.headers?.authorization;
 
 	if (!authHeader || !authHeader?.startsWith('Bearer')) {
 		next('Authentication failed');

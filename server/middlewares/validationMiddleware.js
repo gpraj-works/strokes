@@ -4,6 +4,7 @@ import { compareString } from '../utils/tokenUtils.js';
 import Verification from '../models/emailVerification.js';
 import { env } from '../config/envConfig.js';
 import PasswordReset from '../models/passwordReset.js';
+import FriendRequest from '../models/friendRequest.js';
 
 export const validateRegister = async (req, res, next) => {
 	const { firstName, lastName, email, password } = req.body;
@@ -189,4 +190,44 @@ export const validateUpdateUser = async (req, res, next) => {
 	req.toUpdate = { firstName, lastName, location, profileUrl, profession };
 
 	next();
+};
+
+export const validateFriendRequest = async (req, res, next) => {
+	const { userId } = req.body.user;
+	const { requestTo } = req.body;
+
+	try {
+		const requestExist = await FriendRequest.findOne({
+			requestFrom: userId,
+			requestTo,
+		});
+
+		if (requestExist) {
+			return res.status(StatusCodes.CONFLICT).json({
+				success: false,
+				message: 'Friend request already sent',
+			});
+		}
+
+		const accountExist = await FriendRequest.findOne({
+			requestFrom: requestTo,
+			requestTo: userId,
+		});
+
+		if (accountExist) {
+			return res.status(StatusCodes.CONFLICT).json({
+				success: false,
+				message: 'Friend request already sent',
+			});
+		}
+
+		req.request = { from: userId, to: requestTo };
+		next();
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
 };

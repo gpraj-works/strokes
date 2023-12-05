@@ -8,6 +8,8 @@ import {
 	friendRequest,
 	getFriendRequest,
 	acceptRequest,
+	profileViews,
+	suggestedFriends,
 } from './userController.js';
 import { register, login } from './authController.js';
 
@@ -23,6 +25,8 @@ export {
 	friendRequest,
 	getFriendRequest,
 	acceptRequest,
+	profileViews,
+	suggestedFriends,
 };
 
 // auth-controller

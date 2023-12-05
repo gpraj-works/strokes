@@ -5,6 +5,7 @@ import { compareString, createToken, hashString } from '../utils/tokenUtils.js';
 import PasswordReset from '../models/passwordReset.js';
 import { StatusCodes } from 'http-status-codes';
 import { resetPasswordLink } from '../utils/emailUtils.js';
+import FriendRequest from '../models/friendRequest.js';
 
 export const verifyEmail = async (req, res) => {
 	const { userId, token } = req.params;
@@ -158,7 +159,7 @@ export const updateUser = async (req, res) => {
 		return res.status(StatusCodes.OK).json({
 			success: true,
 			message: 'User updated successfully',
-			user: updateUser,
+			user: updatedUser,
 			token,
 		});
 	} catch (error) {
@@ -170,8 +171,143 @@ export const updateUser = async (req, res) => {
 	}
 };
 
-export const friendRequest = async (req, res) => {};
+export const friendRequest = async (req, res) => {
+	const { from, to } = req.request;
 
-export const getFriendRequest = async (req, res) => {};
+	try {
+		const newRequest = await FriendRequest.create({
+			requestTo: to,
+			requestFrom: from,
+		});
 
-export const acceptRequest = async (req, res) => {};
+		return res.status(StatusCodes.CREATED).json({
+			success: true,
+			message: 'Friend request sent successfully',
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const getFriendRequest = async (req, res) => {
+	const { userId } = req.body.user;
+
+	try {
+		const requests = await FriendRequest.find({
+			requestTo: userId,
+			requestStatus: 'Pending',
+		}).populate({
+			path: 'requestFrom',
+			select: 'firstName lastName profileUrl profession -password',
+		}).limit(10).sort({_id: -1 }); //prettier-ignore
+
+		return res.status(StatusCodes.OK).json({
+			success: true,
+			data: requests,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const acceptRequest = async (req, res) => {
+	const id = req.body.user.userId;
+	const { rid, status } = req.body;
+
+	try {
+		const requestExist = await FriendRequest.findById(rid);
+		if (!requestExist) {
+			return res.status(StatusCodes.NOT_FOUND).json({
+				success: false,
+				message: 'Friend request not found!',
+			});
+		}
+
+		const updatedResponse = await FriendRequest.findOneAndUpdate(
+			{ _id: rid },
+			{ requestStatus: status }
+		);
+
+		if (status === 'Accepted') {
+			const user = await Users.findById(id);
+
+			if (!user?.friends.includes(updatedResponse?.requestFrom)) {
+				user?.friends.push(updatedResponse?.requestFrom);
+				await user.save();
+			}
+
+			const friend = await Users.findById(updatedResponse?.requestFrom);
+
+			if (!friend?.friends.includes(updatedResponse?.requestTo)) {
+				friend?.friends.push(updatedResponse?.requestTo);
+				await friend.save();
+			}
+		}
+
+		return res.status(StatusCodes.OK).json({
+			success: true,
+			message: 'Friend request ' + status,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const profileViews = async (req, res) => {
+	const { userId } = req.body.user;
+	const { id } = req.body;
+
+	try {
+		const user = await Users.findById(id);
+		if (!user?.views.includes(userId)) {
+			user?.views.push(userId);
+			await user.save();
+		}
+		return res.status(StatusCodes.OK).json({
+			success: true,
+			message: 'Profile viewed',
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
+
+export const suggestedFriends = async (req, res) => {
+	const { userId } = req.body.user;
+	let query = {};
+
+	query._id = { $ne: userId };
+	query.friends = { $nin: userId };
+
+	try {
+		const suggestedFriends = await Users.find(query)
+			.limit(15)
+			.select('firstName lastName profileUrl profession -password');
+		return res.status(StatusCodes.OK).json({
+			success: true,
+			data: suggestedFriends,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			status: 'FAILED',
+			message: 'Something went wrong!',
+		});
+	}
+};
