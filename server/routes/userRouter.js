@@ -50,7 +50,6 @@ router.post('/get-friend-request', authUser, getFriendRequest);
 router.post('/accept-request', authUser, acceptRequest);
 
 // profile
-
 router.post('/profile-view', authUser, profileViews);
 router.post('/suggested-friends', authUser, suggestedFriends);
 

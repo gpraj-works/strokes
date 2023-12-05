@@ -5,7 +5,8 @@ import {
 	validateRequestResetPassword,
 	validateResetPassword,
 	validateUpdateUser,
-	validateFriendRequest
+	validateFriendRequest,
+	validateCreatePost
 } from './validationMiddleware.js';
 import { authUser } from './authMiddleware.js';
 import errorMiddleware from './errorMiddleware.js';
@@ -19,7 +20,8 @@ export {
 	validateRequestResetPassword,
 	validateResetPassword,
 	validateUpdateUser,
-	validateFriendRequest
+	validateFriendRequest,
+	validateCreatePost
 };
 	
 // other middlewares

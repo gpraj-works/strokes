@@ -11,10 +11,10 @@ import {
 	profileViews,
 	suggestedFriends,
 } from './userController.js';
+import { createPost, getAllPosts, postById } from './postController.js';
 import { register, login } from './authController.js';
 
 // user-controller
-
 export {
 	requestPasswordReset,
 	verifyEmail,
@@ -29,6 +29,8 @@ export {
 	suggestedFriends,
 };
 
-// auth-controller
+// post-controller
+export { createPost, getAllPosts, postById };
 
+// auth-controller
 export { register, login };

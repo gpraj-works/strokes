@@ -231,3 +231,16 @@ export const validateFriendRequest = async (req, res, next) => {
 		});
 	}
 };
+
+export const validateCreatePost = async (req, res, next) => {
+	const { description } = req.body;
+
+	if (!description) {
+		return res.status(StatusCodes.NOT_ACCEPTABLE).json({
+			success: false,
+			message: 'Description is empty',
+		});
+	}
+
+	next();
+};
