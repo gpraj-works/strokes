@@ -11,7 +11,18 @@ import {
 	profileViews,
 	suggestedFriends,
 } from './userController.js';
-import { createPost, getAllPosts, postById } from './postController.js';
+import {
+	createPost,
+	getAllPosts,
+	postById,
+	getUserPost,
+	getComments,
+	likePost,
+	likePostComment,
+	postComment,
+	replyPostComment,
+	deletePost,
+} from './postController.js';
 import { register, login } from './authController.js';
 
 // user-controller
@@ -30,7 +41,18 @@ export {
 };
 
 // post-controller
-export { createPost, getAllPosts, postById };
+export {
+	createPost,
+	getAllPosts,
+	postById,
+	getUserPost,
+	getComments,
+	likePost,
+	likePostComment,
+	postComment,
+	replyPostComment,
+	deletePost,
+};
 
 // auth-controller
 export { register, login };

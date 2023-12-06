@@ -235,10 +235,23 @@ export const validateFriendRequest = async (req, res, next) => {
 export const validateCreatePost = async (req, res, next) => {
 	const { description } = req.body;
 
-	if (!description) {
+	if (!description || description === '') {
 		return res.status(StatusCodes.NOT_ACCEPTABLE).json({
 			success: false,
 			message: 'Description is empty',
+		});
+	}
+
+	next();
+};
+
+export const validatePostComment = async (req, res, next) => {
+	const { comment } = req.body;
+
+	if (!comment || comment === '') {
+		return res.status(StatusCodes.NOT_ACCEPTABLE).json({
+			success: false,
+			message: 'Comment is required',
 		});
 	}
 
