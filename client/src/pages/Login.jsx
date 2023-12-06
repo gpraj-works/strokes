@@ -7,8 +7,13 @@ import { LoginBg } from '../assets';
 import { AiOutlineInteraction } from 'react-icons/ai';
 import { BsShare } from 'react-icons/bs';
 import { ImConnection } from 'react-icons/im';
+import { apiRequest } from '../utils/httpReq';
+import { useNavigate } from 'react-router-dom';
+import { UserLogin } from '../toolkit/slices/userSlice';
 
 const Login = () => {
+	const navigate = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -21,7 +26,27 @@ const Login = () => {
 	const dispatch = useDispatch();
 
 	const onSubmit = async (data) => {
-		console.log(data);
+		setIsSubmitting(true);
+		try {
+			const response = await apiRequest({
+				url: '/auth/login',
+				data,
+				method: 'POST',
+			});
+
+			if (response?.status === 'FAILED') {
+				setErrMsg(response);
+				return false;
+			}
+
+			const auth = { token: response?.token, ...response?.user };
+			dispatch(UserLogin(auth));
+			navigate('/', { replace: true });
+			setIsSubmitting(false);
+		} catch (error) {
+			console.log(error);
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
@@ -54,8 +79,7 @@ const Login = () => {
 							register={register('email', {
 								required: 'Email address is required',
 							})}
-							styles='w-full rounded-full'
-							labelStyle='ml-1'
+							styles='w-full'
 							error={errors.email ? errors.email.message : ''}
 						/>
 						<TextInput
@@ -66,8 +90,7 @@ const Login = () => {
 							register={register('password', {
 								required: 'Password is required',
 							})}
-							styles='w-full rounded-full'
-							labelStyle='ml-1'
+							styles='w-full'
 							error={errors.password ? errors.password.message : ''}
 						/>
 						<Link
@@ -79,8 +102,8 @@ const Login = () => {
 
 						{errMsg?.message && (
 							<span
-								className={`text-sm ${
-									errMsg?.status == 'failed' ? 'text-danger' : 'text-success'
+								className={`text-sm text-center mb-2 ${
+									errMsg?.status === 'FAILED' ? 'text-danger' : 'text-success'
 								} mt-1`}
 							>
 								{errMsg?.message}

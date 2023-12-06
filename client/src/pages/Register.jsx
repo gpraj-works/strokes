@@ -7,8 +7,12 @@ import { LoginBg } from '../assets';
 import { AiOutlineInteraction } from 'react-icons/ai';
 import { BsShare } from 'react-icons/bs';
 import { ImConnection } from 'react-icons/im';
+import { apiRequest } from '../utils/httpReq';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+	const navigate = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -22,7 +26,21 @@ const Register = () => {
 	const dispatch = useDispatch();
 
 	const onSubmit = async (data) => {
-		console.log(data);
+		setIsSubmitting(true);
+		try {
+			const response = await apiRequest({
+				url: '/auth/register',
+				data,
+				method: 'POST',
+			});
+			setErrMsg(response);
+			if (response?.status === 'FAILED') return;
+			setTimeout(() => navigate('/login', { replace: true }), 5000);
+			setIsSubmitting(false);
+		} catch (error) {
+			console.log(error);
+			setIsSubmitting(false);
+		}
 	};
 
 	return (

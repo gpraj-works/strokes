@@ -38,7 +38,7 @@ export const requestPasswordReset = async (req, res) => {
 		if (isRequestExist) {
 			if (isRequestExist.expiresAt > Date.now()) {
 				return res.status(StatusCodes.CREATED).json({
-					success: 'PENDING',
+					status: 'PENDING',
 					message: 'Reset password link already sent to your email.',
 				});
 			}
@@ -50,13 +50,13 @@ export const requestPasswordReset = async (req, res) => {
 
 		if (!isSent) {
 			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Something went wrong. Try again later.',
 			});
 		}
 
 		return res.status(StatusCodes.CREATED).json({
-			success: 'PENDING',
+			status: 'PENDING',
 			message: 'Reset password link sent to your email.',
 		});
 	} catch (error) {
@@ -126,14 +126,14 @@ export const userById = async (req, res) => {
 
 		if (!user) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				success: false,
+				status: false,
 				message: 'User not found!',
 			});
 		}
 
 		user.password = undefined;
 
-		return res.status(StatusCodes.OK).json({ success: true, user });
+		return res.status(StatusCodes.OK).json({ status: true, user });
 	} catch (error) {
 		console.log(error);
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -157,7 +157,7 @@ export const updateUser = async (req, res) => {
 		updatedUser.password = undefined;
 
 		return res.status(StatusCodes.OK).json({
-			success: true,
+			status: true,
 			message: 'User updated successfully',
 			user: updatedUser,
 			token,
@@ -181,7 +181,7 @@ export const friendRequest = async (req, res) => {
 		});
 
 		return res.status(StatusCodes.CREATED).json({
-			success: true,
+			status: true,
 			message: 'Friend request sent successfully',
 		});
 	} catch (error) {
@@ -199,14 +199,14 @@ export const getFriendRequest = async (req, res) => {
 	try {
 		const requests = await FriendRequest.find({
 			requestTo: userId,
-			requestStatus: 'Pending',
+			requeststatus: 'Pending',
 		}).populate({
 			path: 'requestFrom',
 			select: 'firstName lastName profileUrl profession -password',
 		}).limit(10).sort({_id: -1 }); //prettier-ignore
 
 		return res.status(StatusCodes.OK).json({
-			success: true,
+			status: true,
 			data: requests,
 		});
 	} catch (error) {
@@ -226,14 +226,14 @@ export const acceptRequest = async (req, res) => {
 		const requestExist = await FriendRequest.findById(rid);
 		if (!requestExist) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				success: false,
+				status: false,
 				message: 'Friend request not found!',
 			});
 		}
 
 		const updatedResponse = await FriendRequest.findOneAndUpdate(
 			{ _id: rid },
-			{ requestStatus: status }
+			{ requeststatus: status }
 		);
 
 		if (status === 'Accepted') {
@@ -253,7 +253,7 @@ export const acceptRequest = async (req, res) => {
 		}
 
 		return res.status(StatusCodes.OK).json({
-			success: true,
+			status: true,
 			message: 'Friend request ' + status,
 		});
 	} catch (error) {
@@ -276,7 +276,7 @@ export const profileViews = async (req, res) => {
 			await user.save();
 		}
 		return res.status(StatusCodes.OK).json({
-			success: true,
+			status: true,
 			message: 'Profile viewed',
 		});
 	} catch (error) {
@@ -300,7 +300,7 @@ export const suggestedFriends = async (req, res) => {
 			.limit(15)
 			.select('firstName lastName profileUrl profession -password');
 		return res.status(StatusCodes.OK).json({
-			success: true,
+			status: true,
 			data: suggestedFriends,
 		});
 	} catch (error) {

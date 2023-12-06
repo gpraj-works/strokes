@@ -11,7 +11,7 @@ export const validateRegister = async (req, res, next) => {
 
 	if (!(firstName || lastName || email || password)) {
 		return res.status(StatusCodes.FAILED_DEPENDENCY).json({
-			success: 'FAILED',
+			status: 'FAILED',
 			message: 'Provide required fields',
 		});
 	}
@@ -21,7 +21,7 @@ export const validateRegister = async (req, res, next) => {
 
 		if (isExist) {
 			return res.status(StatusCodes.CONFLICT).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Email id already exists',
 			});
 		}
@@ -41,7 +41,7 @@ export const validateLogin = async (req, res, next) => {
 
 	if (!(email || password)) {
 		return res.status(StatusCodes.FAILED_DEPENDENCY).json({
-			success: 'FAILED',
+			status: 'FAILED',
 			message: 'Provide required fields',
 		});
 	}
@@ -56,14 +56,14 @@ export const validateLogin = async (req, res, next) => {
 
 		if (!isExist) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Invalid email or password',
 			});
 		}
 
 		if (!isExist?.verified) {
 			return res.status(StatusCodes.FORBIDDEN).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Email not verified. Check your email and verify.',
 			});
 		}
@@ -72,7 +72,7 @@ export const validateLogin = async (req, res, next) => {
 
 		if (!isCorrectPassword) {
 			return res.status(StatusCodes.UNAUTHORIZED).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Invalid email or password',
 			});
 		}
@@ -130,7 +130,7 @@ export const validateRequestResetPassword = async (req, res, next) => {
 
 		if (!isUserExist) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				success: 'FAILED',
+				status: 'FAILED',
 				message: 'Email id not found!',
 			});
 		}
@@ -182,7 +182,7 @@ export const validateUpdateUser = async (req, res, next) => {
 
 	if (!(firstName || lastName || location || profileUrl || profession)) {
 		return res.status(StatusCodes.FAILED_DEPENDENCY).json({
-			success: false,
+			status: false,
 			message: 'Provide required fields',
 		});
 	}
@@ -204,7 +204,7 @@ export const validateFriendRequest = async (req, res, next) => {
 
 		if (requestExist) {
 			return res.status(StatusCodes.CONFLICT).json({
-				success: false,
+				status: false,
 				message: 'Friend request already sent',
 			});
 		}
@@ -216,7 +216,7 @@ export const validateFriendRequest = async (req, res, next) => {
 
 		if (accountExist) {
 			return res.status(StatusCodes.CONFLICT).json({
-				success: false,
+				status: false,
 				message: 'Friend request already sent',
 			});
 		}
@@ -237,7 +237,7 @@ export const validateCreatePost = async (req, res, next) => {
 
 	if (!description || description === '') {
 		return res.status(StatusCodes.NOT_ACCEPTABLE).json({
-			success: false,
+			status: false,
 			message: 'Description is empty',
 		});
 	}
@@ -250,7 +250,7 @@ export const validatePostComment = async (req, res, next) => {
 
 	if (!comment || comment === '') {
 		return res.status(StatusCodes.NOT_ACCEPTABLE).json({
-			success: false,
+			status: false,
 			message: 'Comment is required',
 		});
 	}
