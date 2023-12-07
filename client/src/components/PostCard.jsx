@@ -24,7 +24,7 @@ const ReplyCard = ({ reply, user, handleLike }) => {
 					to={'/profile/' + reply?.userId?._id}
 					className='flex flex-col justify-center'
 				>
-					<p className='text-accent-white text-sm font-medium truncate ... w-40'>
+					<p className='text-accent-white capitalize text-sm font-medium truncate ... w-40'>
 						{reply?.userId?.firstName} {reply?.userId?.lastName}
 					</p>
 					<span className='text-accent-light text-xs truncate ...'>
@@ -137,7 +137,10 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 		setLoading(false);
 	};
 
-	const handleLike = async () => {};
+	const handleLike = async (uri) => {
+		await likePost(uri);
+		await getComments();
+	};
 
 	return (
 		<div className='bg-primary p-5 rounded-xl'>
@@ -149,7 +152,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 						className='rounded-full w-10 h-10 object-cover'
 					/>
 					<div className='flex flex-col justify-center'>
-						<p className='text-accent-white font-medium'>
+						<p className='text-accent-white font-medium capitalize'>
 							{post?.userId?.firstName} {post?.userId?.lastName}
 						</p>
 						<span className='text-accent-light text-sm'>
@@ -158,7 +161,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 					</div>
 				</Link>
 				<span className='text-accent-light text-sm'>
-					{moment(post?.userId?.createdAt).fromNow()}
+					{moment(post?.createdAt).fromNow()}
 				</span>
 			</div>
 			<div className='flex flex-col gap-3 mb-2'>
@@ -197,7 +200,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 			<div className='w-full flex items-center justify-between pt-3 text-accent-white'>
 				<button
 					className='outline-none inline-flex items-center gap-2'
-					onClick={() => likePost(post?._id)}
+					onClick={() => handleLike('/posts/like/' + post?._id)}
 				>
 					{post?.likes?.includes(user?._id) ? (
 						<BsHeartFill className='text-strokes-700' />

@@ -1,8 +1,7 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
 
-const BASE_URL = `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/image/upload`;
+const CLOUD = import.meta.env.CLOUD_NAME || 'my-cloud-env';
+const BASE_URL = `https://api.cloudinary.com/v1_1/${CLOUD}/image/upload`;
 
 const fileUpload = async (uploadFile) => {
 	const formData = new FormData();

@@ -36,6 +36,7 @@ const Login = () => {
 
 			if (response?.status === 'FAILED') {
 				setErrMsg(response);
+				setIsSubmitting(false);
 				return false;
 			}
 

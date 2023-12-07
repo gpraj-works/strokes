@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-	post: {},
+	posts: {},
 };
 
 const postSlice = createSlice({
@@ -9,7 +9,7 @@ const postSlice = createSlice({
 	initialState,
 	reducers: {
 		getPost(state, action) {
-			state.theme = action.payload;
+			state.posts = action.payload;
 		},
 	},
 });

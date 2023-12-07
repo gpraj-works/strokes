@@ -151,6 +151,13 @@ export const updateUser = async (req, res) => {
 			new: true,
 		});
 
+		if (!updatedUser) {
+			return res.status(StatusCodes.NOT_FOUND).json({
+				status: 'FAILED',
+				message: 'User not found!',
+			});
+		}
+
 		await updatedUser.populate({ path: 'friends', select: '-password' });
 
 		const token = createToken(updateUser?._id);

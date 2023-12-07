@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { TextInput, Button, Loading } from '../components';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { apiRequest } from '../utils/httpReq';
 
 const ResetPassword = () => {
 	const {
@@ -17,13 +18,26 @@ const ResetPassword = () => {
 	const dispatch = useDispatch();
 
 	const onSubmit = async (data) => {
-		console.log(data);
+		setIsSubmitting(true);
+		try {
+			const response = await apiRequest({
+				url: '/users/request-password-reset',
+				data,
+				method: 'POST',
+			});
+			setErrMsg(response);
+			if (response?.status === 'FAILED') return;
+			setIsSubmitting(false);
+		} catch (error) {
+			console.log(error);
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
 		<div className='w-full h-[100vh] flex items-center justify-center px-6 py-10 bg-dark'>
-			<div className='w-full md:w-2/6 h-fit lg:h-auto 2xl:h-5/6 py-8 lg:py-0 flex bg-primary rounded-xl overflow-hidden shadow-xl'>
-				<div className='w-full lg:w-5/6 h-full py-10 2xl:px-20 flex flex-col justify-center mx-auto'>
+			<div className='w-full lg:w-2/6 md:w-4/6 h-fit lg:h-auto 2xl:h-5/6 py-8 lg:py-0 flex bg-primary rounded-xl overflow-hidden shadow-xl'>
+				<div className='w-full h-full p-10 2xl:px-20 flex flex-col justify-center'>
 					<div className='inline-flex flex-col gap-2'>
 						<p className='text-accent-white text-lg font-base'>
 							Enter your email

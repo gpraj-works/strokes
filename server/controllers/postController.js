@@ -74,13 +74,13 @@ export const postById = async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		const post = await Posts.findById(id).populate({
+		const posts = await Posts.findById(id).populate({
 			path: 'userId',
 			select: 'firstName lastName location profileUrl -password',
 		});
 		return res.status(StatusCodes.OK).json({
 			status: true,
-			data: post,
+			data: posts,
 		});
 	} catch (error) {
 		console.log(error);

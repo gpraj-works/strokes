@@ -20,14 +20,14 @@ const ProfileCard = ({ user }) => {
 	return (
 		<div className='w-full bg-primary flex flex-col items-center shadow-sm rounded-xl px-6 py-4'>
 			<div className='w-full flex items-center justify-between border-b accent-border pb-4'>
-				<Link to={'/profile/' + user?._id} className='flex gap-4'>
+				<Link to={'/profile/' + user?._id} className='flex gap-3'>
 					<img
 						src={user?.profileUrl ?? NoProfile}
 						alt={user?.email}
-						className='rounded-full w-14 h-14 object-cover'
+						className='rounded-full w-10 h-10 object-cover'
 					/>
 					<div className='flex flex-col justify-center'>
-						<p className='text-accent-white text-lg font-medium'>
+						<p className='text-accent-white font-medium capitalize'>
 							{user?.firstName} {user?.lastName}
 						</p>
 						<span className='text-accent-light text-sm'>
