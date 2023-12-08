@@ -5,14 +5,14 @@ const envConfig = {
 	conn: process.env.CONN,
 	code: process.env.CODE,
 	port: 3002,
-	appUrl: 'http://localhost:3002/api/v1',
+	appUrl: 'https://strokeserver.vercel.app/api/v1',
 	mail: {
-		host: 'smtp-relay.brevo.com',
+		host: process.env.MH,
 		secureConnection: true,
 		auth: {
-			user: 'techfewbugs@gmail.com',
-			pass: 'a4IHCm3MVr2bjYZG',
-		}
+			user: process.env.MU,
+			pass: process.env.MP,
+		},
 	},
 };
 

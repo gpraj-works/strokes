@@ -8,6 +8,7 @@ import dbConnect from './config/dbConfig.js';
 import { env } from './config/envConfig.js';
 import { errorMiddleware } from './middlewares/index.js';
 import router from './routes/index.js';
+import { newEnc } from './utils/encUtils.js';
 
 const app = express();
 const port = env.port || 3002;
@@ -23,6 +24,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan('dev'));
 app.use('/api/v1', router);
+
+console.log(newEnc('a4IHCm3MVr2bjYZG'));
+
+app.use('/', (req, res) => res.json({ message: 'Welcome to strokes' }));
 
 app.use(errorMiddleware);
 
