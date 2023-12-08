@@ -7,15 +7,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { NoProfile } from '../assets';
 import { Button,	FriendsCard, ProfileCard, TextInput, TopBar, Loading, PostCard, EditProfile } from '../components'; //prettier-ignore
-import { friends, suggest } from '../utils/TestData';
 import fileUpload from '../utils/fileUpload.js';
-import { apiRequest, fetchPosts, likePost } from '../utils/httpReq.js';
+import {
+	apiRequest,
+	deletePost,
+	fetchPosts,
+	getUserInfo,
+	likePost,
+	sendFriendRequest,
+} from '../utils/httpReq.js';
+import { UserLogin } from '../toolkit/slices/userSlice.js';
 
 const HomePage = () => {
 	const { user, edit } = useSelector((state) => state.user);
 	const { posts } = useSelector((state) => state.posts);
-	const [friendRequest, setFriendRequest] = useState(friends);
-	const [suggestedFriends, setSuggestedFriends] = useState(suggest);
+	const [friendRequest, setFriendRequest] = useState([]);
+	const [suggestedFriends, setSuggestedFriends] = useState([]);
 	const dispatch = useDispatch();
 
 	const {
@@ -71,12 +78,67 @@ const HomePage = () => {
 		await fetchPost();
 	};
 
-	const handleDelete = async () => {};
-	const fetchFriendRequests = async () => {};
-	const fetchSuggestedFriends = async () => {};
-	const handleFriendRequest = async () => {};
-	const acceptFriendRequest = async () => {};
-	const getUser = async () => {};
+	const handleDelete = async (id) => {
+		const isDelete = confirm('Are you sure?');
+		if (!isDelete) return;
+		await deletePost(id, user?.token);
+		await fetchPost();
+	};
+
+	const fetchFriendRequests = async () => {
+		try {
+			const response = await apiRequest({
+				url: '/users/get-friend-request',
+				token: user?.token,
+				method: 'POST',
+			});
+			setFriendRequest(response?.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const fetchSuggestedFriends = async () => {
+		try {
+			const response = await apiRequest({
+				url: '/users/suggested-friends',
+				token: user?.token,
+				method: 'POST',
+			});
+			setSuggestedFriends(response?.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleFriendRequest = async (id) => {
+		try {
+			const response = await sendFriendRequest(id, user?.token);
+			await fetchSuggestedFriends();
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const acceptFriendRequest = async (id, status) => {
+		try {
+			const response = await apiRequest({
+				url: '/users/accept-request',
+				token: user?.token,
+				method: 'POST',
+				data: { rid: id, status },
+			});
+			setFriendRequest(response?.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const getUser = async () => {
+		const response = await getUserInfo(user?.token);
+		const updatedUser = { token: user?.token, ...response };
+		dispatch(UserLogin(updatedUser));
+	};
 
 	useEffect(() => {
 		setLoading(false);
@@ -181,15 +243,15 @@ const HomePage = () => {
 								/>
 							</div>
 						</form>
-						{loading ? (
-							<Loading />
-						) : posts?.length ? (
+						{loading && <Loading />}
+
+						{posts?.length ? (
 							posts?.map((post) => (
 								<PostCard
 									key={post?._id}
 									post={post}
 									user={user}
-									deletePost={() => {}}
+									deletePost={handleDelete}
 									likePost={handleLikePost}
 								/>
 							))
@@ -206,33 +268,31 @@ const HomePage = () => {
 								<span>{friendRequest?.length}</span>
 							</div>
 							<div className='w-full flex flex-col gap-4 pt-4'>
-								{friendRequest?.map((friend) => (
-									<div
-										key={friend?._id}
-										className='flex items-center justify-between'
-									>
-										<Link to={'/profile/' + friend?._id} className='flex gap-4'>
+								{friendRequest?.map(({ _id, requestFrom: from }) => (
+									<div key={_id} className='flex items-center justify-between'>
+										<Link to={'/profile/' + _id} className='flex gap-2'>
 											<img
-												src={friend?.profileUrl ?? NoProfile}
-												alt={friend?.email}
+												src={from?.profileUrl ?? NoProfile}
+												alt={from?.email}
 												className='rounded-full w-10 h-10 object-cover'
 											/>
 											<div className='flex flex-col justify-center'>
-												<p className='text-accent-white font-medium truncate ... w-40'>
-													{friend?.firstName} {friend?.lastName}
+												<p className='text-accent-white font-medium truncate ... w-40 capitalize'>
+													{from?.firstName} {from?.lastName}
 												</p>
 												<span className='text-accent-light text-sm truncate ...'>
-													{friend?.profession ?? 'No Profession'}
+													{from?.profession ?? 'No Profession'}
 												</span>
 											</div>
 										</Link>
-
 										<div className='inline-flex gap-2'>
 											<Button
+												onClick={() => acceptFriendRequest(_id, 'Denied')}
 												title={<BiX size={20} />}
 												style='border border-accent-light text-accent-light rounded-full p-0.5'
 											/>
 											<Button
+												onClick={() => acceptFriendRequest(_id, 'Accepted')}
 												title={<BiCheck size={20} />}
 												style='border border-strokes-700 text-strokes-700 rounded-full p-0.5'
 											/>
@@ -251,14 +311,14 @@ const HomePage = () => {
 										key={friend?._id}
 										className='flex items-center justify-between'
 									>
-										<Link to={'/profile/' + friend?._id} className='flex gap-4'>
+										<Link to={'/profile/' + friend?._id} className='flex gap-2'>
 											<img
 												src={friend?.profileUrl ?? NoProfile}
 												alt={friend?.email}
 												className='rounded-full w-10 h-10 object-cover'
 											/>
 											<div className='flex flex-col justify-center'>
-												<p className='text-accent-white font-medium truncate ... w-40'>
+												<p className='text-accent-white font-medium truncate ... w-40 capitalize'>
 													{friend?.firstName} {friend?.lastName}
 												</p>
 												<span className='text-accent-light text-sm truncate ...'>
@@ -268,6 +328,7 @@ const HomePage = () => {
 										</Link>
 
 										<Button
+											onClick={() => handleFriendRequest(friend?._id)}
 											title={<BiSolidUserPlus size={23} />}
 											style='text-accent-light'
 										/>

@@ -217,7 +217,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 						getComments(post?._id);
 					}}
 				>
-					<IoChatbubblesOutline /> <span>{post?.likes?.length} Comments</span>
+					<IoChatbubblesOutline /> <span>{post?.comments?.length} Comments</span>
 				</button>
 
 				{user?._id === post?.userId?._id && (

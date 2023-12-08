@@ -206,7 +206,7 @@ export const getFriendRequest = async (req, res) => {
 	try {
 		const requests = await FriendRequest.find({
 			requestTo: userId,
-			requeststatus: 'Pending',
+			requestStatus: 'Pending',
 		}).populate({
 			path: 'requestFrom',
 			select: 'firstName lastName profileUrl profession -password',
@@ -240,7 +240,7 @@ export const acceptRequest = async (req, res) => {
 
 		const updatedResponse = await FriendRequest.findOneAndUpdate(
 			{ _id: rid },
-			{ requeststatus: status }
+			{ requestStatus: status }
 		);
 
 		if (status === 'Accepted') {
@@ -257,6 +257,11 @@ export const acceptRequest = async (req, res) => {
 				friend?.friends.push(updatedResponse?.requestTo);
 				await friend.save();
 			}
+		} else {
+			await FriendRequest.findOneAndUpdate(
+				{ _id: rid },
+				{ requestStatus: status }
+			);
 		}
 
 		return res.status(StatusCodes.OK).json({

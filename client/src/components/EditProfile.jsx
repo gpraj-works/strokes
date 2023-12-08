@@ -105,7 +105,7 @@ const EditProfile = () => {
 								type='text'
 								styles='w-full capitalize'
 								register={register('lastName', {
-									required: 'Last Name do no match',
+									required: 'Last Name is required!',
 								})}
 								error={errors.lastName ? errors.lastName?.message : ''}
 							/>
@@ -117,9 +117,7 @@ const EditProfile = () => {
 								placeholder='Profession'
 								type='text'
 								styles='w-full capitalize'
-								register={register('profession', {
-									required: 'Profession is required!',
-								})}
+								register={register('profession')}
 								error={errors.profession ? errors.profession?.message : ''}
 							/>
 
@@ -129,9 +127,7 @@ const EditProfile = () => {
 								placeholder='Location'
 								type='text'
 								styles='w-full capitalize'
-								register={register('location', {
-									required: 'Location do no match',
-								})}
+								register={register('location')}
 								error={errors.location ? errors.location?.message : ''}
 							/>
 						</div>
