@@ -1,0 +1,12 @@
+{
+	"name": "strokes",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"setup-project": "cd server && npm i && cd .. && cd client && npm i",
+		"start-project": "cd server && nodemon index.js && cd .. && cd client && npm run start"
+	},
+	"author": "Pushparaj Gunasekaran",
+	"license": "MIT"
+}

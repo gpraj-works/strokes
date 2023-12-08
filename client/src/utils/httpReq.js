@@ -23,7 +23,6 @@ export const apiRequest = async ({ url, token, data, method }) => {
 		return result?.data;
 	} catch (error) {
 		const response = error?.response?.data;
-		console.log('api req : ', error);
 		return { status: response?.status, message: response?.message };
 	}
 };
