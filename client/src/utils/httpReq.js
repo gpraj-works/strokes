@@ -70,7 +70,7 @@ export const getUserInfo = async ({ id, token }) => {
 		if (response?.message === 'Authentication failed') {
 			removeState('user');
 			window.location.replace('/login');
-			window.alert('User session expired. Login again.');
+			console.log('User session expired. Login again.');
 		}
 
 		return response?.user;
