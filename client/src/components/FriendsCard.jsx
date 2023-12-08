@@ -11,25 +11,23 @@ const FriendsCard = ({ friends }) => {
 			</div>
 			<div className='w-full flex flex-col gap-4 pt-4'>
 				{friends?.map((friend) => (
-					<Link
-						to={'/profile/' + friend?._id}
-						className='flex gap-4'
-						key={friend?._id}
-					>
-						<img
-							src={friend?.profileUrl ?? NoProfile}
-							alt={friend?.email}
-							className='rounded-full w-10 h-10 object-cover'
-						/>
-						<div className='flex flex-col justify-center'>
-							<p className='text-accent-white font-medium'>
-								{friend?.firstName} {friend?.lastName}
-							</p>
-							<span className='text-accent-light text-sm'>
-								{friend?.profession ?? 'No Profession'}
-							</span>
-						</div>
-					</Link>
+					<div key={friend?._id}>
+						<Link to={'/profile/' + friend?._id} className='flex gap-3'>
+							<img
+								src={friend?.profileUrl ?? NoProfile}
+								alt={friend?.email}
+								className='rounded-full w-10 h-10 object-cover'
+							/>
+							<div className='flex flex-col justify-center'>
+								<p className='text-accent-white font-medium capitalize'>
+									{friend?.firstName} {friend?.lastName}
+								</p>
+								<span className='text-accent-light text-sm'>
+									{friend?.profession ?? 'No Profession'}
+								</span>
+							</div>
+						</Link>
+					</div>
 				))}
 			</div>
 		</div>

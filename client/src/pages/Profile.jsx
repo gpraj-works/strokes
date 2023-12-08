@@ -1,25 +1,51 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { FriendsCard, Loading, PostCard, ProfileCard, TopBar } from '../components'; //prettier-ignore
+import { useEffect, useState } from 'react';
 import {
-	FriendsCard,
-	Loading,
-	PostCard,
-	ProfileCard,
-	TopBar,
-} from '../components';
-import { posts } from '../utils/TestData';
-import { useState } from 'react';
+	deletePost,
+	fetchPosts,
+	getUserInfo,
+	likePost,
+} from '../utils/httpReq';
 
 const Profile = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.user);
-	// const { posts } = useSelector((state) => state.posts);
+	const { posts } = useSelector((state) => state.posts);
 	const [userInfo, setUserInfo] = useState(user);
 	const [loading, setLoading] = useState(false);
 
-	const handleDelete = () => {};
-	const handleLikePost = () => {};
+	const uri = '/posts/get-user-post/' + id;
+
+	const getUser = async () => {
+		const response = await getUserInfo({ token: user?.token, id });
+		setUserInfo(response);
+	};
+
+	const getPosts = async () => {
+		await fetchPosts(user?.token, dispatch, uri);
+		setLoading(false);
+	};
+
+	const handleDelete = async (id) => {
+		const isDelete = confirm('Are you sure?');
+		if (!isDelete) return;
+		await deletePost(id, user?.token);
+		await getPosts();
+	};
+
+	const handleLikePost = async (uri) => {
+		await likePost({ uri, token: user?.token });
+		await getPosts();
+	};
+
+	useEffect(() => {
+		setLoading(true);
+		getUser();
+		getPosts();
+	}, []);
 
 	return (
 		<>
@@ -33,16 +59,15 @@ const Profile = () => {
 						</div>
 					</div>
 
-					<div className=' flex-1 h-full bg-primary px-4 flex flex-col gap-6 overflow-y-auto'>
-						{loading ? (
-							<Loading />
-						) : posts?.length > 0 ? (
+					<div className='flex-1 h-full px-4 flex flex-col gap-6 overflow-y-auto'>
+						{loading && <Loading />}
+						{posts?.length > 0 ? (
 							posts?.map((post) => (
 								<PostCard
 									post={post}
 									key={post?._id}
 									user={user}
-									deletePost={handleDelete}
+									deletePost={() => handleDelete(post?._id)}
 									likePost={handleLikePost}
 								/>
 							))

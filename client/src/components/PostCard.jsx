@@ -7,7 +7,21 @@ import { BsHeart, BsHeartFill, BsTrash3 } from 'react-icons/bs';
 import { IoChatbubblesOutline } from 'react-icons/io5';
 import { Button, Loading, TextInput } from '../components';
 import { useForm } from 'react-hook-form';
-import { postComments } from '../utils/TestData';
+import { apiRequest } from '../utils/httpReq';
+
+const getPostComments = async (id) => {
+	if (!id) return;
+	try {
+		const response = await apiRequest({
+			url: '/posts/comments/' + id,
+			method: 'GET',
+		});
+
+		return response?.data;
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 const ReplyCard = ({ reply, user, handleLike }) => {
 	return (
@@ -36,7 +50,10 @@ const ReplyCard = ({ reply, user, handleLike }) => {
 				{reply?.comment}
 
 				<div className='mt-2 flex gap-2'>
-					<button className='outline-none inline-flex items-center gap-2 text-sm'>
+					<button
+						className='outline-none inline-flex items-center gap-2 text-sm'
+						onClick={handleLike}
+					>
 						{reply?.likes?.includes(user?._id) ? (
 							<BsHeartFill className='text-strokes-700' />
 						) : (
@@ -60,13 +77,48 @@ const PostComments = ({ user, id, replyAt, getComments }) => {
 	const {
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm();
 
 	const [errMsg, setErrMsg] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	const onSubmit = (data) => {};
+	const onSubmit = async (data) => {
+		setLoading(true);
+
+		const uri = !replyAt
+			? '/posts/comment/' + id
+			: '/posts/reply-comment/' + id;
+
+		try {
+			const updatedData = {
+				comment: data?.comment,
+				from: user?.firstName + ' ' + user?.lastName,
+				replyAt,
+			};
+
+			const response = await apiRequest({
+				url: uri,
+				data: updatedData,
+				token: user?.token,
+				method: 'POST',
+			});
+
+			if (response?.status === 'FAILED') {
+				setErrMsg(response);
+				setLoading(false);
+				return false;
+			}
+
+			reset({ comment: '' });
+			await getComments();
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 
 	return (
 		<form
@@ -130,16 +182,16 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 	const [replyComments, setReplyComments] = useState(0);
 	const [showComments, setShowComments] = useState(0);
 
-	const getComments = async () => {
+	const getComments = async (id) => {
 		setReplyComments(0);
-
-		setComments(postComments);
+		const result = await getPostComments(id);
+		setComments(result);
 		setLoading(false);
 	};
 
-	const handleLike = async (uri) => {
+	const handleLike = async (uri, id) => {
 		await likePost(uri);
-		await getComments();
+		await getComments(id);
 	};
 
 	return (
@@ -160,7 +212,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 						</span>
 					</div>
 				</Link>
-				<span className='text-accent-light text-sm'>
+				<span className='text-accent-light text-sm hidden md:block'>
 					{moment(post?.createdAt).fromNow()}
 				</span>
 			</div>
@@ -200,14 +252,14 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 			<div className='w-full flex items-center justify-between pt-3 text-accent-white'>
 				<button
 					className='outline-none inline-flex items-center gap-2'
-					onClick={() => handleLike('/posts/like/' + post?._id)}
+					onClick={() => handleLike('/posts/like/' + post?._id, post?._id)}
 				>
 					{post?.likes?.includes(user?._id) ? (
 						<BsHeartFill className='text-strokes-700' />
 					) : (
 						<BsHeart />
 					)}{' '}
-					<span>{post?.likes?.length} Likes</span>
+					<span>{post?.likes?.length} <span className='hidden md:block'> Likes</span></span>
 				</button>
 
 				<button
@@ -217,7 +269,11 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 						getComments(post?._id);
 					}}
 				>
-					<IoChatbubblesOutline /> <span>{post?.comments?.length} Comments</span>
+					<IoChatbubblesOutline />{' '}
+					<span>
+						{post?.comments?.length}{' '}
+						<span className='hidden md:block'> Comments</span>
+					</span>
 				</button>
 
 				{user?._id === post?.userId?._id && (
@@ -225,7 +281,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 						className='outline-none inline-flex items-center text-danger gap-2'
 						onClick={() => deletePost(post?._id)}
 					>
-						<BsTrash3 /> <span> Delete</span>
+						<BsTrash3 /> <span className='hidden md:block'> Delete</span>
 					</button>
 				)}
 			</div>
@@ -238,10 +294,8 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 							getComments={() => getComments(post?._id)}
 						/>
 					</div>
-					{loading ? (
-						<Loading />
-					) : (
-						comments.push.length > 0 &&
+					{loading && <Loading />}
+					{comments?.length > 0 &&
 						comments?.map((comment) => (
 							<div key={comment?._id} className='w-full py-2'>
 								<div className='flex gap-4'>
@@ -257,7 +311,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 										to={'/profile/' + comment?.userId?._id}
 										className='flex flex-col justify-center'
 									>
-										<p className='text-accent-white text-sm font-medium truncate ... w-40'>
+										<p className='text-accent-white text-sm font-medium truncate ... w-40 capitalize'>
 											{comment?.userId?.firstName} {comment?.userId?.lastName}
 										</p>
 										<span className='text-accent-light text-xs truncate ...'>
@@ -269,7 +323,15 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 									{comment?.comment}
 
 									<div className='mt-2 flex gap-2'>
-										<button className='outline-none inline-flex items-center gap-2 text-sm'>
+										<button
+											className='outline-none inline-flex items-center gap-2 text-sm'
+											onClick={() =>
+												handleLike(
+													'/posts/like-comment/' + comment?._id,
+													post?._id
+												)
+											}
+										>
 											{comment?.likes?.includes(user?._id) ? (
 												<BsHeartFill className='text-strokes-700' />
 											) : (
@@ -288,7 +350,7 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 									{replyComments === comment?._id && (
 										<PostComments
 											user={user}
-											id={post?._id}
+											id={comment?._id}
 											replyAt={comment?.from}
 											getComments={() => getComments(post?._id)}
 										/>
@@ -316,15 +378,17 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 												reply={reply}
 												user={user}
 												key={reply?._id}
-												handleLike={handleLike(
-													`/post/like-comment/${comment?._id}/${reply?._id}`
-												)}
+												handleLike={() =>
+													handleLike(
+														`/posts/like-comment/${comment?._id}/${reply?._id}`,
+														post?._id
+													)
+												}
 											/>
 										))}
 								</div>
 							</div>
-						))
-					)}
+						))}
 				</>
 			)}
 		</div>

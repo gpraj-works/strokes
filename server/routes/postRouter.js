@@ -29,7 +29,7 @@ router.get('/:id', authUser, postById);
 router.delete('/:id', authUser, deletePost);
 
 // comments
-router.post('/comments/:postId', getComments);
+router.get('/comments/:postId', getComments);
 router.post('/comment/:id', authUser, validatePostComment, postComment);
 router.post(
 	'/reply-comment/:id',

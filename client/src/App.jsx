@@ -1,7 +1,6 @@
 import { Outlet, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import { HomePage, Login, Register, ResetPassword, Profile } from './pages';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 
 const Layout = () => {
 	const { user } = useSelector((state) => state.user);

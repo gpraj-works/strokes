@@ -135,7 +135,7 @@ const HomePage = () => {
 	};
 
 	const getUser = async () => {
-		const response = await getUserInfo(user?.token);
+		const response = await getUserInfo({ token: user?.token });
 		const updatedUser = { token: user?.token, ...response };
 		dispatch(UserLogin(updatedUser));
 	};
@@ -150,8 +150,10 @@ const HomePage = () => {
 
 	return (
 		<>
-			<div className='home w-full px-0 lg:px-10 pb-12 2xl:px-40 bg-dark h-screen overflow-hidden'>
-				<TopBar />
+			<div className='home w-full lg:px-10 pb-12 2xl:px-40 bg-dark h-screen overflow-hidden'>
+				<div className='px-4 md:px-0'>
+					<TopBar />
+				</div>
 				<div className='w-full flex gap-2 lg:gap-4 pt-5 pb-10 h-full'>
 					<div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-3 overflow-y-auto'>
 						<ProfileCard user={user} />
@@ -222,7 +224,7 @@ const HomePage = () => {
 								</label>
 								<label
 									htmlFor='postGif'
-									className='flex items-center text-accent-light gap-1 cursor-pointer'
+									className='items-center text-accent-light gap-1 cursor-pointer hidden md:flex'
 								>
 									<input
 										type='file'
@@ -243,7 +245,7 @@ const HomePage = () => {
 								/>
 							</div>
 						</form>
-						{loading && <Loading />}
+						{posting && <Loading />}
 
 						{posts?.length ? (
 							posts?.map((post) => (

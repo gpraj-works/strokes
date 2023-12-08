@@ -1,10 +1,14 @@
+import { StatusCodes } from 'http-status-codes';
 import { validateToken } from '../utils/tokenUtils.js';
 
 export const authUser = async (req, res, next) => {
 	const authHeader = req?.headers?.authorization;
 
 	if (!authHeader || !authHeader?.startsWith('Bearer')) {
-		next('Authentication failed');
+		return res.status(StatusCodes.UNAUTHORIZED).json({
+			status: 'FAILED',
+			message: 'Authentication failed',
+		});
 	}
 
 	const token = authHeader?.split(' ')[1];
@@ -15,6 +19,9 @@ export const authUser = async (req, res, next) => {
 		next();
 	} catch (error) {
 		console.log(error);
-		next('Authentication failed');
+		return res.status(StatusCodes.UNAUTHORIZED).json({
+			status: 'FAILED',
+			message: 'Authentication failed',
+		});
 	}
 };

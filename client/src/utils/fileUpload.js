@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CLOUD = import.meta.env.CLOUD_NAME || 'my-cloud-env';
+const CLOUD = import.meta.env.VITE_REACT_CLOUD_NAME;
 const BASE_URL = `https://api.cloudinary.com/v1_1/${CLOUD}/image/upload`;
 
 const fileUpload = async (uploadFile) => {

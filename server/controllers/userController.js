@@ -117,7 +117,7 @@ export const changePassword = async (req, res) => {
 export const userById = async (req, res) => {
 	const { userId } = req.body.user;
 	const { id } = req.params;
-
+	
 	try {
 		const user = await Users.findById(id ?? userId).populate({
 			path: 'friends',

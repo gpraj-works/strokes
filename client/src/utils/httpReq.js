@@ -23,7 +23,7 @@ export const apiRequest = async ({ url, token, data, method }) => {
 		return result?.data;
 	} catch (error) {
 		const response = error?.response?.data;
-		console.log(response);
+		console.log('api req : ', error);
 		return { status: response?.status, message: response?.message };
 	}
 };
@@ -61,12 +61,13 @@ export const deletePost = async (id, token) => {
 	}
 };
 
-export const getUserInfo = async (id, token) => {
+export const getUserInfo = async ({ id, token }) => {
 	const baseUrl = '/users/userById/';
 	const uri = id === undefined ? baseUrl : baseUrl + id;
 
 	try {
 		const response = await apiRequest({ url: uri, token, method: 'POST' });
+
 		if (response?.message === 'Authentication failed') {
 			removeState('user');
 			window.alert('User session expired. Login again.');
