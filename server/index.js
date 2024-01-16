@@ -15,7 +15,7 @@ const __dirname = path.resolve(path.dirname(''));
 
 app.use(express.static(path.join(__dirname, 'views/')));
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: ['https://stroke.vercel.app'], credentials: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: '10mb' }));
