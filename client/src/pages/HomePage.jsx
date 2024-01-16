@@ -113,8 +113,9 @@ const HomePage = () => {
 
 	const handleFriendRequest = async (id) => {
 		try {
-			const response = await sendFriendRequest(id, user?.token);
+			await sendFriendRequest(id, user?.token);
 			await fetchSuggestedFriends();
+			alert('Friend request sent!');
 		} catch (error) {
 			console.log(error);
 		}
@@ -129,6 +130,7 @@ const HomePage = () => {
 				data: { rid: id, status },
 			});
 			setFriendRequest(response?.data);
+			alert('Friend request accepted!');
 		} catch (error) {
 			console.log(error);
 		}
