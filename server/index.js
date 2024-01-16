@@ -13,11 +13,7 @@ const app = express();
 const port = env.port || 3002;
 const __dirname = path.resolve(path.dirname(''));
 
-app.set("views", __dirname + "/views");
-app.set("view engine", "ejs");
-app.use(express.static(__dirname + "public"));
-
-// app.use(express.static(path.join(__dirname, 'views/')));
+app.use(express.static(path.join(__dirname, './views/')));
 app.use(helmet());
 app.use(cors({ origin: ['https://stroke.vercel.app'], credentials: true }));
 app.use(bodyParser.json());
