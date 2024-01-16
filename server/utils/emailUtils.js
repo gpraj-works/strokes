@@ -28,6 +28,7 @@ export const sendVerificationEmail = async (user) => {
 			createdAt: Date.now(),
 			expiresAt: Date.now() + 3600000,
 		});
+		
 
 		if (isVerified) {
 			await transporter.sendMail(mailOptions);

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SetPosts } from '../toolkit/slices/postSlice';
 import { removeState } from './localStorage';
 
+// const API_URL = 'http://localhost:3002/api/v1';
 const API_URL = 'https://strokeserver.vercel.app/api/v1';
 
 export const API = axios.create({

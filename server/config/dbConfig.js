@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
 import { env } from './envConfig.js';
-import { useEnc } from '../utils/encUtils.js';
 
 const dbConnect = async () => {
 	try {
-		await mongoose.connect(useEnc(env.conn));
+		await mongoose.connect(env.conn);
 		console.log('🔸 Database connected!');
 	} catch (error) {
 		console.log('database connection failed : ' + error);

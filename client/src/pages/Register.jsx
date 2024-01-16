@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Logo, TextInput, Button, Loading } from '../components';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { LoginBg } from '../assets';
 import { AiOutlineInteraction } from 'react-icons/ai';
 import { BsShare } from 'react-icons/bs';
@@ -22,8 +21,6 @@ const Register = () => {
 
 	const [errMsg, setErrMsg] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	const dispatch = useDispatch();
 
 	const onSubmit = async (data) => {
 		setIsSubmitting(true);

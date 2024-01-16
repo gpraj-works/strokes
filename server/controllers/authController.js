@@ -9,7 +9,7 @@ export const register = async (req, res) => {
 
 	try {
 		const user = await Users.create(req.body);
-		const isEmailSent = await sendVerificationEmail(user, res);
+		const isEmailSent = await sendVerificationEmail(user);
 
 		if (!isEmailSent) {
 			return res.status(StatusCodes.BAD_REQUEST).json({
