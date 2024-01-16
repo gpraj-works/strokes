@@ -55,7 +55,7 @@ router.post('/suggested-friends', authUser, suggestedFriends);
 
 // views
 router.get('/verified', (req, res) => {
-	return res.sendFile(path.join(__dirname, 'views', 'verified.html'));
+	return res.sendFile('../views/verified.html');
 });
 
 router.get('/reset-password', (req, res) => {
